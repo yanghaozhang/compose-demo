@@ -1,11 +1,47 @@
 package com.test.compose
 
+/**
+ * ==================================================================================
+ * NavigationActivity - Jetpack Compose Navigation 完整示例
+ * ==================================================================================
+ * 
+ * 本文件展示了 Compose Navigation 的完整使用：
+ * 1. NavHost 和 NavController - 导航的核心组件
+ * 2. 底部导航栏 - NavigationBar
+ * 3. 带参数的路由 - 类型安全的参数传递
+ * 4. 页面转场动画 - enterTransition, exitTransition
+ * 5. 返回栈管理 - popUpTo, launchSingleTop
+ * 
+ * 核心概念：
+ * - NavHost：导航容器，定义所有可能的目标页面
+ * - NavController：导航控制器，执行导航操作
+ * - Route：路由字符串，唯一标识一个目标页面
+ * - Arguments：路由参数，在页面间传递数据
+ * 
+ * 架构特点：
+ * - 类型安全的路由定义（sealed class）
+ * - 声明式导航配置
+ * - 自动处理返回栈
+ * - 支持深度链接
+ * 
+ * 对比传统开发：
+ * - 替代 Fragment + Navigation Component
+ * - 无需 XML 导航图
+ * - 代码即配置，更加灵活
+ * 
+ * ==================================================================================
+ */
+
+// ==================== 导入区域 ====================
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+
+// 动画相关
+import androidx.compose.animation.*  // 动画组件
+import androidx.compose.animation.core.tween  // tween：补间动画
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,22 +59,84 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.*
-import androidx.navigation.navArgument
+
+// Navigation 导航相关
+import androidx.navigation.NavHostController  // NavHostController：导航控制器
+import androidx.navigation.NavType  // NavType：参数类型定义
+import androidx.navigation.compose.*  // Navigation Compose 所有组件
+import androidx.navigation.navArgument  // navArgument：定义路由参数
+
 import com.test.compose.ui.theme.ComposeTheme
 
-// 导航路由定义
-sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
+// ==================== 路由定义 ====================
+
+/**
+ * Screen - 路由定义 sealed class
+ * 
+ * sealed class 特点：
+ * - 有限的子类集合，编译时已知所有子类
+ * - 适合用于表示有限的状态或选项
+ * - when 表达式可以做穷尽检查
+ * 
+ * 路由模式：
+ * - "home" - 简单路由，无参数
+ * - "details/{itemId}/{itemName}" - 带参数路由
+ *   {参数名} 是路径参数占位符
+ * 
+ * 设计优势：
+ * - 类型安全：编译时检查路由
+ * - 集中管理：所有路由在一处定义
+ * - 易于维护：修改路由只需改一处
+ */
+sealed class Screen(
+    val route: String,        // 路由字符串
+    val title: String,        // 页面标题
+    val icon: ImageVector     // 导航图标
+) {
+    /**
+     * Home - 首页路由
+     * 简单路由，无参数
+     */
     object Home : Screen("home", "首页", Icons.Default.Home)
+    
+    /**
+     * Profile - 个人中心路由
+     */
     object Profile : Screen("profile", "个人", Icons.Default.Person)
+    
+    /**
+     * Settings - 设置页路由
+     */
     object Settings : Screen("settings", "设置", Icons.Default.Settings)
+    
+    /**
+     * Details - 详情页路由
+     * 
+     * 带参数的路由：
+     * - {itemId}：商品 ID，Int 类型
+     * - {itemName}：商品名称，String 类型
+     * 
+     * createRoute 方法：
+     * - 辅助方法，创建具体的路由字符串
+     * - 类型安全：参数类型明确
+     * - 避免字符串拼接错误
+     */
     object Details : Screen("details/{itemId}/{itemName}", "详情", Icons.Default.Info) {
+        /**
+         * 创建带参数的路由字符串
+         * 例如：createRoute(1, "手机") -> "details/1/手机"
+         */
         fun createRoute(itemId: Int, itemName: String) = "details/$itemId/$itemName"
     }
 }
 
+// ==================== Activity ====================
+
+/**
+ * NavigationActivity - Navigation 导航测试页面
+ * 
+ * 简单的 Activity，只负责设置 UI
+ */
 class NavigationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,24 +144,66 @@ class NavigationActivity : ComponentActivity() {
         setContent {
             ComposeTheme {
                 NavigationApp(
-                    onBack = { finish() }
+                    onBack = { finish() }  // 传递返回回调
                 )
             }
         }
     }
 }
 
+// ==================== 主应用组件 ====================
+
+/**
+ * NavigationApp - 导航应用的主组件
+ * 
+ * 这是整个导航架构的核心，包含：
+ * - NavController：导航控制器
+ * - NavHost：导航宿主
+ * - 底部导航栏
+ * - 所有页面的路由配置
+ * 
+ * @param onBack 返回回调，用于关闭 Activity
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationApp(onBack: () -> Unit) {
+    /**
+     * rememberNavController：创建并记住 NavController
+     * 
+     * NavController：
+     * - 导航的核心控制器
+     * - 管理返回栈
+     * - 执行导航操作（navigate, popBackStack 等）
+     * - 保存和恢复状态
+     */
     val navController = rememberNavController()
+    
+    /**
+     * 控制底部导航栏的显示/隐藏
+     * 
+     * 设计：
+     * - 主要页面（Home、Profile、Settings）显示底部栏
+     * - 详情页隐藏底部栏
+     */
     var showBottomBar by remember { mutableStateOf(true) }
     
-    // 监听导航变化
+    /**
+     * 监听导航变化
+     * 
+     * currentBackStackEntryAsState()：
+     * - 将当前返回栈顶部条目转为 State
+     * - 导航发生时会触发重组
+     * - 可以获取当前路由、参数等信息
+     */
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     
-    // 根据路由决定是否显示底部导航栏
+    /**
+     * 根据当前路由决定是否显示底部导航栏
+     * 
+     * in 操作符：检查元素是否在集合中
+     * 如果当前路由是主要页面之一，显示底部栏
+     */
     showBottomBar = currentRoute in listOf(
         Screen.Home.route,
         Screen.Profile.route,

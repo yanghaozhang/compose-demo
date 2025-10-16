@@ -1,27 +1,65 @@
 package com.test.compose
 
+/**
+ * ==================================================================================
+ * ListActivity - Compose 列表组件学习示例
+ * ==================================================================================
+ * 
+ * 本文件全面展示了 Compose 中列表的使用：
+ * 1. LazyColumn - 垂直延迟加载列表
+ * 2. LazyRow - 横向延迟加载列表
+ * 3. LazyVerticalGrid - 网格列表
+ * 4. 列表项的交互和状态管理
+ * 
+ * 核心概念：
+ * - Lazy 组件的性能优势（类似 RecyclerView）
+ * - items() 和 itemsIndexed() 的使用
+ * - 列表数据的创建和管理
+ * - 动态状态在列表中的应用
+ * 
+ * 对比传统开发：
+ * - LazyColumn ≈ RecyclerView (vertical)
+ * - LazyRow ≈ RecyclerView (horizontal)
+ * - LazyVerticalGrid ≈ GridLayoutManager
+ * 
+ * 优势：
+ * - 无需适配器（Adapter）
+ * - 无需 ViewHolder
+ * - 声明式编写，代码更简洁
+ * 
+ * ==================================================================================
+ */
+
+// ==================== 导入区域 ====================
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
+import androidx.compose.foundation.background  // background：背景修饰符
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+
+// Lazy 列表组件
+import androidx.compose.foundation.lazy.LazyColumn  // 垂直延迟列表
+import androidx.compose.foundation.lazy.LazyRow  // 横向延迟列表
+import androidx.compose.foundation.lazy.items  // 渲染列表项
+import androidx.compose.foundation.lazy.itemsIndexed  // 带索引的列表项渲染
+
+// Grid 网格组件
+import androidx.compose.foundation.lazy.grid.GridCells  // 网格单元格配置
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid  // 垂直网格
+import androidx.compose.foundation.lazy.grid.items  // 网格项渲染
+
+// 形状
+import androidx.compose.foundation.shape.CircleShape  // 圆形
+import androidx.compose.foundation.shape.RoundedCornerShape  // 圆角矩形
+
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.*  // 所有 filled 图标
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clip  // clip：裁剪修饰符
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -29,30 +67,48 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.test.compose.ui.theme.ComposeTheme
 
-// 数据类定义
+// ==================== 数据类定义 ====================
+
+/**
+ * User - 用户数据类
+ * 用于垂直列表示例
+ */
 data class User(
-    val id: Int,
-    val name: String,
-    val email: String,
-    val avatar: ImageVector
+    val id: Int,              // 用户唯一标识
+    val name: String,         // 用户名
+    val email: String,        // 邮箱
+    val avatar: ImageVector   // 头像图标
 )
 
+/**
+ * Product - 商品数据类
+ * 用于横向列表示例
+ */
 data class Product(
-    val id: Int,
-    val name: String,
-    val price: Double,
-    val category: String,
-    val color: Color
+    val id: Int,          // 商品 ID
+    val name: String,     // 商品名称
+    val price: Double,    // 价格
+    val category: String, // 分类
+    val color: Color      // 展示颜色
 )
 
+/**
+ * Message - 消息数据类
+ * 用于消息列表示例
+ */
 data class Message(
-    val id: Int,
-    val sender: String,
-    val content: String,
-    val time: String,
-    val isRead: Boolean
+    val id: Int,          // 消息 ID
+    val sender: String,   // 发送者
+    val content: String,  // 消息内容
+    val time: String,     // 时间
+    val isRead: Boolean   // 是否已读
 )
 
+// ==================== Activity ====================
+
+/**
+ * ListActivity - 列表加载测试页面
+ */
 class ListActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,13 +140,28 @@ class ListActivity : ComponentActivity() {
     }
 }
 
+// ==================== 主屏幕 ====================
+
+/**
+ * ListScreen - 列表示例主屏幕
+ * 
+ * 使用 TabRow 切换不同类型的列表示例：
+ * - 垂直列表（LazyColumn）
+ * - 横向列表（LazyRow）
+ * - 网格列表（LazyVerticalGrid）
+ * - 消息列表（带状态交互）
+ */
 @Composable
 fun ListScreen(modifier: Modifier = Modifier) {
+    // 选中的 Tab 索引
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("垂直列表", "横向列表", "网格列表", "消息列表")
     
     Column(modifier = modifier.fillMaxSize()) {
-        // Tab 切换
+        /**
+         * TabRow：Material3 的标签页组件
+         * 常用于在多个视图之间切换
+         */
         TabRow(selectedTabIndex = selectedTab) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -101,7 +172,10 @@ fun ListScreen(modifier: Modifier = Modifier) {
             }
         }
         
-        // 根据选中的Tab显示不同的列表
+        /**
+         * 根据选中的 Tab 显示不同的列表示例
+         * when 表达式：Kotlin 的模式匹配
+         */
         when (selectedTab) {
             0 -> VerticalListExample()
             1 -> HorizontalListExample()
@@ -111,9 +185,29 @@ fun ListScreen(modifier: Modifier = Modifier) {
     }
 }
 
-// 垂直列表示例
+// ==================== 垂直列表示例 ====================
+
+/**
+ * VerticalListExample - 垂直列表示例
+ * 
+ * 演示 LazyColumn 的基本用法：
+ * - 创建模拟数据
+ * - 使用 itemsIndexed 渲染列表项
+ * - 列表项支持展开/收起交互
+ * 
+ * LazyColumn 特点：
+ * - 只渲染可见项，性能优秀
+ * - 自动处理滚动和回收
+ * - 类似 RecyclerView 但更简单
+ */
 @Composable
 fun VerticalListExample() {
+    /**
+     * remember：在重组时保持数据
+     * 
+     * 这里创建 20 个模拟用户数据
+     * List(20) { }：创建包含 20 个元素的列表
+     */
     val users = remember {
         List(20) { index ->
             User(
