@@ -23,6 +23,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".TextButtonActivity"
+            android:exported="false"
+            android:label="Text &amp; Button 测试"
+            android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".ListActivity"
+            android:exported="false"
+            android:label="列表加载测试"
+            android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".ViewModelActivity"
+            android:exported="false"
+            android:label="ViewModel 绑定测试"
+            android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".NavigationActivity"
+            android:exported="false"
+            android:label="Navigation 导航测试"
+            android:theme="@style/Theme.Compose" />
     </application>
 
 </manifest>
