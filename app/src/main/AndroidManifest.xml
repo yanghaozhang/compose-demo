@@ -43,6 +43,11 @@
             android:exported="false"
             android:label="Navigation 导航测试"
             android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".CustomViewActivity"
+            android:exported="false"
+            android:label="自定义控件测试"
+            android:theme="@style/Theme.Compose" />
     </application>
 
 </manifest>

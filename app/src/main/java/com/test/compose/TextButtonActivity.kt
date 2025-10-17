@@ -515,14 +515,15 @@ fun TextButtonScreen(modifier: Modifier = Modifier) {
 // ==================== 辅助组件 ====================
 
 /**
- * SectionTitle - 区域标题组件
+ * SectionTitle - 区域标题组件（私有）
  * 
  * 可重用的标题组件，用于分隔不同的示例区域
+ * 私有函数，只在本文件内使用
  * 
  * @param title 标题文本
  */
 @Composable
-fun SectionTitle(title: String) {
+private fun SectionTitle(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge,

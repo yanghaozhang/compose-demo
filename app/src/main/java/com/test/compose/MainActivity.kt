@@ -172,6 +172,11 @@ fun FeatureListScreen(modifier: Modifier = Modifier) {
             title = "Navigation 导航测试",
             description = "Material3 + Compose Navigation 完整架构",
             activityClass = NavigationActivity::class.java
+        ),
+        FeatureItem(
+            title = "自定义控件测试",
+            description = "Canvas 绘制和自定义测量布局",
+            activityClass = CustomViewActivity::class.java
         )
     )
     
