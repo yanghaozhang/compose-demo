@@ -48,6 +48,11 @@
             android:exported="false"
             android:label="自定义控件测试"
             android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".BottomSheetActivity"
+            android:exported="false"
+            android:label="底部抽屉测试"
+            android:theme="@style/Theme.Compose" />
     </application>
 
 </manifest>
