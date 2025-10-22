@@ -1,0 +1,1 @@
+adb install -r -t "D:\projecttest\compose\app\build\intermediates\apk\debug\app-debug.apk"

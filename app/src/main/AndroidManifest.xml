@@ -53,6 +53,16 @@
             android:exported="false"
             android:label="底部抽屉测试"
             android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".MVIActivity"
+            android:exported="false"
+            android:label="MVI 架构测试"
+            android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".EffectActivity"
+            android:exported="false"
+            android:label="副作用 API 测试"
+            android:theme="@style/Theme.Compose" />
     </application>
 
 </manifest>

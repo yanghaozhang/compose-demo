@@ -182,6 +182,16 @@ fun FeatureListScreen(modifier: Modifier = Modifier) {
             title = "底部抽屉测试",
             description = "Modal 和 Standard 底部抽屉的实现",
             activityClass = BottomSheetActivity::class.java
+        ),
+        FeatureItem(
+            title = "MVI 架构测试",
+            description = "Model-View-Intent 单向数据流架构",
+            activityClass = MVIActivity::class.java
+        ),
+        FeatureItem(
+            title = "副作用 API 测试",
+            description = "LaunchedEffect、SideEffect、DisposableEffect",
+            activityClass = EffectActivity::class.java
         )
     )
     
