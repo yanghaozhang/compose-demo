@@ -53,6 +53,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.test.compose.ui.theme.ComposeTheme
+import com.test.compose.ui.BulletPoint
+import com.test.compose.ui.InfoCard
+import com.test.compose.ui.DemoCard
+import com.test.compose.ui.CodeCard
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
@@ -893,69 +897,7 @@ fun ComparisonSummary() {
 }
 
 // ==================== UI 辅助组件 ====================
-
-@Composable
-fun InfoCard(
-    title: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    description: String,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            content()
-        }
-    }
-}
-
-@Composable
-fun DemoCard(
-    title: String,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            content()
-        }
-    }
-}
+// InfoCard, DemoCard, BulletPoint, CodeCard 已移至 com.test.compose.ui.CommonComponents
 
 @Composable
 fun LogCard(
@@ -1108,21 +1050,6 @@ fun DecisionItem(question: String, answer: String) {
                 fontWeight = FontWeight.Bold
             )
         }
-    }
-}
-
-@Composable
-fun BulletPoint(text: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Text("• ", fontWeight = FontWeight.Bold)
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium
-        )
     }
 }
 

@@ -63,6 +63,11 @@
             android:exported="false"
             android:label="副作用 API 测试"
             android:theme="@style/Theme.Compose" />
+        <activity
+            android:name=".InteropActivity"
+            android:exported="false"
+            android:label="Compose 和 View 互操作"
+            android:theme="@style/Theme.Compose" />
     </application>
 
 </manifest>

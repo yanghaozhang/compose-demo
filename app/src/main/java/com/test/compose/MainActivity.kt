@@ -192,6 +192,11 @@ fun FeatureListScreen(modifier: Modifier = Modifier) {
             title = "副作用 API 测试",
             description = "LaunchedEffect、SideEffect、DisposableEffect",
             activityClass = EffectActivity::class.java
+        ),
+        FeatureItem(
+            title = "Compose & View 互操作",
+            description = "Compose 与传统 View 的混合使用",
+            activityClass = InteropActivity::class.java
         )
     )
     
